@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { DocumentUpload } from "@/components/DocumentUpload";
 import { PromptEditor } from "@/components/PromptEditor";
 import { CodeGenerator } from "@/components/CodeGenerator";
+import { ChatInterface } from "@/components/ChatInterface";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
@@ -24,7 +25,7 @@ export default function Home() {
   const [currentStep, setCurrentStep] = useState<"input" | "edit" | "generate">(
     "input"
   );
-  const [inputType, setInputType] = useState<"text" | "document">("text");
+  const [inputType, setInputType] = useState<"text" | "document" | "chat">("text");
   const [prompt, setPrompt] = useState("");
   const [enhancedPrompt, setEnhancedPrompt] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -81,6 +82,19 @@ export default function Home() {
     }
   };
 
+  const handleChatGenerate = (chatPrompt: string) => {
+    console.log("💬 handleChatGenerate called with prompt:", chatPrompt);
+    console.log("💬 Chat prompt length:", chatPrompt.length);
+
+    try {
+      setPrompt(chatPrompt);
+      setEnhancedPrompt(chatPrompt);
+      setCurrentStep("generate");
+      console.log("✅ handleChatGenerate completed successfully");
+    } catch (error) {
+      console.error("❌ Error in handleChatGenerate:", error);
+    }
+  };
   const features = [
     {
       icon: Upload,
@@ -179,6 +193,17 @@ export default function Home() {
                     <Upload className="w-4 h-4" />
                     Upload Document
                   </Button>
+                  <Button
+                    variant={inputType === "chat" ? "default" : "outline"}
+                    onClick={() => {
+                      console.log("🔘 Chat input type selected");
+                      setInputType("chat");
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    AI Chat
+                  </Button>
                 </div>
 
                 {inputType === "text" ? (
@@ -216,7 +241,11 @@ export default function Home() {
                     </Button>
                   </div>
                 ) : (
-                  <DocumentUpload onProcessed={handleDocumentProcess} />
+                  inputType === "document" ? (
+                    <DocumentUpload onProcessed={handleDocumentProcess} />
+                  ) : (
+                    <ChatInterface onGenerateCode={handleChatGenerate} />
+                  )
                 )}
 
                 {/* Progress Indicators */}

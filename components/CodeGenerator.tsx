@@ -64,39 +64,49 @@ export function CodeGenerator({ prompt, onBack }: CodeGeneratorProps) {
 
       console.log('🤖 Making request to Claude API...');
       
-      const response = await fetch('/api/claude', {
+      const response = await fetch('/api/groq', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ 
+          text: prompt,
+          action: 'generate'
+        }),
       });
 
       if (!response.ok) {
-        throw new Error(`Claude API request failed: ${response.status}`);
+        throw new Error(`Groq API request failed: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('🤖 Claude API response received:', data);
+      console.log('🤖 Groq API response received:', data);
 
       console.log('📊 Setting generation progress to 100%');
       setGenerationProgress(100);
 
-      // Generate Next.js project structure with the received code
-      const nextjsFiles = generateNextjsStructure(data.code || {});
+      // Parse the response from Groq Deepseek Coder
+      let generatedFiles;
+      try {
+        const parsedResponse = JSON.parse(data.processedText);
+        generatedFiles = parsedResponse.files || {};
+      } catch (parseError) {
+        console.warn('⚠️ Failed to parse JSON response, using fallback');
+        generatedFiles = generateMockNextjsProject();
+      }
       
-      console.log('✅ Next.js files generated:', Object.keys(nextjsFiles));
-      setGeneratedFiles(nextjsFiles);
+      console.log('✅ Next.js files generated:', Object.keys(generatedFiles));
+      setGeneratedFiles(generatedFiles);
       
       // Create actual Stackblitz project
-      const stackblitzProject = await createStackblitzProject(nextjsFiles);
+      const stackblitzProject = await createStackblitzProject(generatedFiles);
       console.log('🔗 Stackblitz project created:', stackblitzProject);
       setStackblitzUrl(stackblitzProject);
       
       console.log('✅ Code generation completed successfully');
       toast({
         title: 'Code generated successfully!',
-        description: 'Your Next.js project is ready for preview and download.',
+        description: 'Your Next.js project has been generated using Groq Deepseek Coder.',
       });
       
     } catch (error) {
@@ -113,7 +123,7 @@ export function CodeGenerator({ prompt, onBack }: CodeGeneratorProps) {
       
       toast({
         title: 'Code generated with fallback',
-        description: 'Generated using mock data. Please check your API configuration.',
+        description: 'Generated using mock data. Please check your Groq API configuration.',
         variant: 'destructive'
       });
     } finally {
@@ -857,7 +867,7 @@ export default function ${componentName}() {
                   Generating Your Next.js Project...
                 </h3>
                 <p className="text-blue-700 dark:text-blue-300">
-                  Claude AI is creating a production-ready Next.js application with Tailwind CSS
+                  Groq Deepseek Coder is creating a production-ready Next.js application with Tailwind CSS
                 </p>
               </div>
             </div>

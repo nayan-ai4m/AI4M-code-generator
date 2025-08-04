@@ -45,13 +45,42 @@ export async function POST(request: NextRequest) {
     } else if (action === 'enhance') {
       console.log('✨ Using enhance system prompt');
       systemPrompt = `You are an expert software architect. Enhance the provided prompt by adding technical specifications, best practices, accessibility requirements, performance considerations, and modern development standards. Make the prompt more detailed and actionable for code generation.`;
+    } else if (action === 'generate') {
+      console.log('🔧 Using code generation system prompt');
+      systemPrompt = `You are an expert Next.js developer. Generate a complete, production-ready Next.js 14 application with TypeScript and Tailwind CSS based on the user's requirements.
+
+IMPORTANT: Return your response as a JSON object with this exact structure:
+{
+  "files": {
+    "package.json": "file content here",
+    "next.config.js": "file content here",
+    "tailwind.config.js": "file content here",
+    "app/layout.tsx": "file content here",
+    "app/page.tsx": "file content here",
+    "app/globals.css": "file content here",
+    "components/ComponentName.tsx": "file content here"
+  },
+  "description": "Brief description of what was built"
+}
+
+Requirements:
+- Use Next.js 14 with App Router
+- TypeScript for all components
+- Tailwind CSS for styling
+- Modern React patterns (hooks, functional components)
+- Responsive design
+- Proper file structure
+- Include all necessary configuration files`;
+    } else if (action === 'chat') {
+      console.log('💬 Using chat system prompt');
+      systemPrompt = `You are an expert AI coding assistant. Help users with their programming questions, provide code examples, explain concepts, and assist with debugging. Be helpful, clear, and provide practical solutions. If asked to generate code, provide complete, working examples with proper explanations.`;
     } else {
       console.warn('⚠️ Unknown action provided:', action);
     }
 
     console.log('🌐 Making request to Groq API...');
     console.log('🌐 Request payload:', {
-      model: 'mixtral-8x7b-32768',
+      model: action === 'generate' ? 'deepseek-coder' : 'mixtral-8x7b-32768',
       max_tokens: 2000,
       temperature: 0.7,
       systemPromptLength: systemPrompt.length,
@@ -66,7 +95,7 @@ export async function POST(request: NextRequest) {
         'Authorization': `Bearer ${groqApiKey}`
       },
       body: JSON.stringify({
-        model: 'mixtral-8x7b-32768',
+        model: action === 'generate' ? 'deepseek-coder' : 'mixtral-8x7b-32768',
         messages: [
           {
             role: 'system',
@@ -77,7 +106,7 @@ export async function POST(request: NextRequest) {
             content: text
           }
         ],
-        max_tokens: 2000,
+        max_tokens: action === 'generate' ? 4000 : 2000,
         temperature: 0.7
       })
     });
