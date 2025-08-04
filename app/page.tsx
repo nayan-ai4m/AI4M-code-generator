@@ -22,65 +22,12 @@ import { useToast } from "@/hooks/use-toast";
 export default function Home() {
   console.log("🏠 Home component initialized");
 
-  const [currentStep, setCurrentStep] = useState<"input" | "edit" | "generate">(
-    "input"
-  );
-  const [inputType, setInputType] = useState<"text" | "document" | "chat">("text");
-  const [prompt, setPrompt] = useState("");
-  const [enhancedPrompt, setEnhancedPrompt] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [currentView, setCurrentView] = useState<"chat" | "legacy">("chat");
   const { toast } = useToast();
 
   console.log("🏠 Home component state:", {
-    currentStep,
-    inputType,
-    promptLength: prompt.length,
-    enhancedPromptLength: enhancedPrompt.length,
-    isProcessing,
+    currentView,
   });
-
-  const handlePromptSubmit = async (userPrompt: string) => {
-    console.log("📝 handlePromptSubmit called with prompt:", userPrompt);
-    console.log("📝 Prompt length:", userPrompt.length);
-
-    try {
-      setPrompt(userPrompt);
-      setEnhancedPrompt(userPrompt);
-      setCurrentStep("edit");
-      console.log("✅ handlePromptSubmit completed successfully");
-    } catch (error) {
-      console.error("❌ Error in handlePromptSubmit:", error);
-    }
-  };
-
-  const handleDocumentProcess = async (processedPrompt: string) => {
-    console.log(
-      "📄 handleDocumentProcess called with processed prompt:",
-      processedPrompt
-    );
-    console.log("📄 Processed prompt length:", processedPrompt.length);
-
-    try {
-      setEnhancedPrompt(processedPrompt);
-      setCurrentStep("edit");
-      console.log("✅ handleDocumentProcess completed successfully");
-    } catch (error) {
-      console.error("❌ Error in handleDocumentProcess:", error);
-    }
-  };
-
-  const handlePromptEdit = (editedPrompt: string) => {
-    console.log("✏️ handlePromptEdit called with edited prompt:", editedPrompt);
-    console.log("✏️ Edited prompt length:", editedPrompt.length);
-
-    try {
-      setEnhancedPrompt(editedPrompt);
-      setCurrentStep("generate");
-      console.log("✅ handlePromptEdit completed successfully");
-    } catch (error) {
-      console.error("❌ Error in handlePromptEdit:", error);
-    }
-  };
 
   const handleChatGenerate = (chatPrompt: string) => {
     console.log("💬 handleChatGenerate called with prompt:", chatPrompt);
@@ -159,124 +106,55 @@ export default function Home() {
         </div>
 
         {/* Main Interface */}
-        <div className="max-w-4xl mx-auto">
-          {currentStep === "input" && (
+        <div className="max-w-6xl mx-auto">
+          {/* View Toggle */}
+          <div className="flex justify-center gap-4 mb-8">
+            <Button
+              variant={currentView === "chat" ? "default" : "outline"}
+              onClick={() => setCurrentView("chat")}
+              className="flex items-center gap-2"
+            >
+              <MessageSquare className="w-4 h-4" />
+              AI Chat Assistant
+            </Button>
+            <Button
+              variant={currentView === "legacy" ? "default" : "outline"}
+              onClick={() => setCurrentView("legacy")}
+              className="flex items-center gap-2"
+            >
+              <Code className="w-4 h-4" />
+              Legacy Mode
+            </Button>
+          </div>
+
+          {currentView === "chat" ? (
+            <ChatInterface onGenerateCode={handleChatGenerate} />
+          ) : (
             <Card className="border-0 shadow-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Get Started</CardTitle>
+                <CardTitle className="text-2xl">Legacy Mode</CardTitle>
                 <CardDescription>
-                  Choose how you would like to input your requirements
+                  Traditional step-by-step code generation workflow
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Input Type Selection */}
-                <div className="flex justify-center gap-4 mb-6">
-                  <Button
-                    variant={inputType === "text" ? "default" : "outline"}
-                    onClick={() => {
-                      console.log("🔘 Text input type selected");
-                      setInputType("text");
-                    }}
-                    className="flex items-center gap-2"
-                  >
-                    <FileText className="w-4 h-4" />
-                    Text Prompt
-                  </Button>
-                  <Button
-                    variant={inputType === "document" ? "default" : "outline"}
-                    onClick={() => {
-                      console.log("🔘 Document input type selected");
-                      setInputType("document");
-                    }}
-                    className="flex items-center gap-2"
-                  >
-                    <Upload className="w-4 h-4" />
-                    Upload Document
-                  </Button>
-                  <Button
-                    variant={inputType === "chat" ? "default" : "outline"}
-                    onClick={() => {
-                      console.log("🔘 Chat input type selected");
-                      setInputType("chat");
-                    }}
-                    className="flex items-center gap-2"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    AI Chat
-                  </Button>
-                </div>
-
-                {inputType === "text" ? (
-                  <div className="space-y-4">
-                    <Textarea
-                      placeholder="Describe what you want to build... (e.g., 'Create a React component for a user profile card with avatar, name, and social links')"
-                      value={prompt}
-                      onChange={(e) => {
-                        console.log(
-                          "📝 Prompt textarea changed:",
-                          e.target.value
-                        );
-                        setPrompt(e.target.value);
-                      }}
-                      className="text-base resize-none"
-                      style={{
-                        minHeight: "5rem",
-                        maxHeight: "10rem",
-                        height: `${Math.min(
-                          400,
-                          24 +
-                            prompt.split("\n").length * 24 +
-                            Math.floor(prompt.length / 60) * 24
-                        )}px`,
-                        overflow: "auto",
-                      }}
-                    />
-                    <Button
-                      onClick={() => handlePromptSubmit(prompt)}
-                      disabled={!prompt.trim()}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                    >
-                      Enhance Prompt
-                      <ArrowRight className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  inputType === "document" ? (
-                    <DocumentUpload onProcessed={handleDocumentProcess} />
-                  ) : (
-                    <ChatInterface onGenerateCode={handleChatGenerate} />
-                  )
-                )}
-
-                {/* Progress Indicators */}
-                <div className="flex justify-center gap-2 mt-8">
-                  <Badge variant="default">1. Input</Badge>
-                  <Badge variant="outline">2. Edit</Badge>
-                  <Badge variant="outline">3. Generate</Badge>
-                </div>
+              <CardContent className="text-center py-12">
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Legacy mode functionality can be implemented here if needed.
+                </p>
+                <Button
+                  onClick={() => setCurrentView("chat")}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                >
+                  Try New Chat Interface
+                </Button>
               </CardContent>
             </Card>
-          )}
-
-          {currentStep === "edit" && (
-            <PromptEditor
-              initialPrompt={enhancedPrompt}
-              onSubmit={handlePromptEdit}
-              onBack={() => setCurrentStep("input")}
-            />
-          )}
-
-          {currentStep === "generate" && (
-            <CodeGenerator
-              prompt={enhancedPrompt}
-              onBack={() => setCurrentStep("edit")}
-            />
           )}
         </div>
 
         {/* Footer */}
         <footer className="text-center mt-16 text-gray-500 dark:text-gray-400">
-          <p className="mb-2">Powered by Claude AI, ChatGPT, and Stackblitz</p>
+          <p className="mb-2">Powered by Groq AI and Stackblitz</p>
         </footer>
       </div>
     </div>
