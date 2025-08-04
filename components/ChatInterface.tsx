@@ -153,7 +153,7 @@ export function ChatInterface({ onGenerateCode }: ChatInterfaceProps) {
   };
 
   return (
-    <Card className="border-0 shadow-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-[600px] flex flex-col">
+    <Card className="border border-yellow-500 shadow-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm h-[600px] flex flex-col">
       <CardHeader className="pb-4">
         <CardTitle className="text-2xl flex items-center gap-2">
           <MessageSquare className="w-6 h-6" />
