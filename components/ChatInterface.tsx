@@ -292,7 +292,7 @@ What would you like to work on today?`,
   };
 
   return (
-    <Card className="border-0 shadow-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm flex flex-col h-[80vh]">
+    <Card className="border-0 shadow-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm flex flex-col">
       <CardHeader className="pb-4 border-b">
         <CardTitle className="text-2xl flex items-center gap-2">
           <MessageSquare className="w-6 h-6" />
