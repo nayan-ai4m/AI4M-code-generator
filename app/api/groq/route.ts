@@ -95,7 +95,7 @@ Requirements:
         'Authorization': `Bearer ${groqApiKey}`
       },
       body: JSON.stringify({
-        model: action === 'generate' ? 'deepseek-coder' : 'mixtral-8x7b-32768',
+        model: action === 'generate' ? 'deepseek-coder' : 'llama3-8b-8192',
         messages: [
           {
             role: 'system',

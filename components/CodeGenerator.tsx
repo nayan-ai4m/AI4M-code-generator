@@ -735,8 +735,8 @@ export default function ${componentName}() {
       };
 
       // Use Stackblitz SDK to create project
-      const stackblitzSdk = await import('@stackblitz/sdk');
-      const vm = await stackblitzSdk.embedProject('stackblitz-container', project, {
+      const StackBlitz = await import('@stackblitz/sdk');
+      const vm = await StackBlitz.embedProject('stackblitz-container', project, {
         openFile: 'app/page.tsx',
         view: 'preview',
         hideNavigation: false,
