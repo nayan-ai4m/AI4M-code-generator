@@ -1,12 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Sparkles, Edit3, Save, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
+  Edit3,
+  Save,
+  RefreshCw,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
 interface PromptEditorProps {
   initialPrompt: string;
@@ -14,37 +27,44 @@ interface PromptEditorProps {
   onBack: () => void;
 }
 
-export function PromptEditor({ initialPrompt, onSubmit, onBack }: PromptEditorProps) {
-  console.log('✏️ PromptEditor component initialized with:', {
+export function PromptEditor({
+  initialPrompt,
+  onSubmit,
+  onBack,
+}: PromptEditorProps) {
+  console.log("✏️ PromptEditor component initialized with:", {
     initialPromptLength: initialPrompt.length,
-    initialPromptPreview: initialPrompt.substring(0, 100) + '...'
+    initialPromptPreview: initialPrompt.substring(0, 100) + "...",
   });
-  
+
   const [prompt, setPrompt] = useState(initialPrompt);
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [hasEnhanced, setHasEnhanced] = useState(false);
   const { toast } = useToast();
 
-  console.log('✏️ PromptEditor state:', {
+  console.log("✏️ PromptEditor state:", {
     promptLength: prompt.length,
     isEnhancing,
-    hasEnhanced
+    hasEnhanced,
   });
 
   const enhancePrompt = async () => {
-    console.log('🚀 enhancePrompt called');
-    console.log('🚀 Current prompt before enhancement:', prompt.substring(0, 100) + '...');
-    
+    console.log("🚀 enhancePrompt called");
+    console.log(
+      "🚀 Current prompt before enhancement:",
+      prompt.substring(0, 100) + "..."
+    );
+
     setIsEnhancing(true);
-    
+
     try {
-      console.log('🤖 Starting Groq API enhancement simulation...');
+      console.log("🤖 Starting Groq API enhancement simulation...");
       // Simulate Groq API enhancement
       // In a real implementation, you would call your Groq API endpoint
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      console.log('🤖 Groq API simulation completed');
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      console.log("🤖 Groq API simulation completed");
+
       // Mock enhanced prompt (replace with actual Groq API response)
       const enhancedPrompt = `${prompt}
 
@@ -77,48 +97,55 @@ export function PromptEditor({ initialPrompt, onSubmit, onBack }: PromptEditorPr
 
 Please generate production-ready code that follows these enhanced specifications.`;
 
-      console.log('✅ Enhanced prompt generated:', enhancedPrompt.substring(0, 100) + '...');
-      console.log('📊 Enhanced prompt length:', enhancedPrompt.length);
-      
+      console.log(
+        "✅ Enhanced prompt generated:",
+        enhancedPrompt.substring(0, 100) + "..."
+      );
+      console.log("📊 Enhanced prompt length:", enhancedPrompt.length);
+
       setPrompt(enhancedPrompt);
       setHasEnhanced(true);
-      
-      console.log('✅ Prompt state updated, hasEnhanced set to true');
-      
+
+      console.log("✅ Prompt state updated, hasEnhanced set to true");
+
       toast({
-        title: 'Prompt enhanced successfully',
-        description: 'Your prompt has been optimized for better code generation.',
+        title: "Prompt enhanced successfully",
+        description:
+          "Your prompt has been optimized for better code generation.",
       });
-      
     } catch (error) {
-      console.error('❌ Error in enhancePrompt:', error);
-      console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      console.error("❌ Error in enhancePrompt:", error);
+      console.error(
+        "❌ Error stack:",
+        error instanceof Error ? error.stack : "No stack trace"
+      );
       toast({
-        title: 'Enhancement failed',
-        description: 'There was an error enhancing your prompt. Please try again.',
-        variant: 'destructive'
+        title: "Enhancement failed",
+        description:
+          "There was an error enhancing your prompt. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsEnhancing(false);
-      console.log('🚀 enhancePrompt completed, isEnhancing set to false');
+      console.log("🚀 enhancePrompt completed, isEnhancing set to false");
     }
   };
 
   const handleSubmit = () => {
-    console.log('📤 handleSubmit called');
-    console.log('📤 Current prompt:', prompt.substring(0, 100) + '...');
-    
+    console.log("📤 handleSubmit called");
+    console.log("📤 Current prompt:", prompt.substring(0, 100) + "...");
+
     if (!prompt.trim()) {
-      console.warn('⚠️ Empty prompt detected');
+      console.warn("⚠️ Empty prompt detected");
       toast({
-        title: 'Empty prompt',
-        description: 'Please provide a prompt before proceeding.',
-        variant: 'destructive'
+        title: "Empty prompt",
+        description: "Please provide a prompt before proceeding.",
+        variant: "destructive",
       });
       return;
     }
-    
-    console.log('✅ Prompt validation passed, calling onSubmit');
+
+    console.log("✅ Prompt validation passed, calling onSubmit");
     onSubmit(prompt);
   };
 
@@ -140,39 +167,61 @@ Please generate production-ready code that follows these enhanced specifications
                 Edit Your Prompt
               </CardTitle>
               <CardDescription>
-                Review and refine your prompt before generating code. 
-                {!hasEnhanced && " Click 'Enhance' for AI-powered improvements."}
+                Review and refine your prompt before generating code.
+                {!hasEnhanced &&
+                  " Click 'Enhance' for AI-powered improvements."}
               </CardDescription>
             </div>
             {hasEnhanced && (
-              <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
+              <Badge
+                variant="secondary"
+                className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+              >
                 <Sparkles className="w-3 h-3 mr-1" />
                 Enhanced
               </Badge>
             )}
           </div>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           {/* Prompt Editor */}
           <div className="space-y-4">
-            <label htmlFor="prompt" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="prompt"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Code Generation Prompt
             </label>
             <Textarea
               id="prompt"
               value={prompt}
               onChange={(e) => {
-                console.log('📝 Prompt textarea changed, new length:', e.target.value.length);
+                console.log(
+                  "📝 Prompt textarea changed, new length:",
+                  e.target.value.length
+                );
                 setPrompt(e.target.value);
               }}
+              style={{
+                minHeight: "5rem",
+                maxHeight: "10rem",
+                height: `${Math.min(
+                  400,
+                  24 +
+                    prompt.split("\n").length * 24 +
+                    Math.floor(prompt.length / 60) * 24
+                )}px`,
+                overflow: "auto",
+              }}
               placeholder="Describe what you want to build..."
-              className="min-h-64 text-base leading-relaxed"
+              className="text-base leading-relaxed"
             />
             <div className="flex justify-between items-center text-sm text-gray-500">
               <span>{prompt.length} characters</span>
               <span>
-                {prompt.split(/\s+/).filter(word => word.length > 0).length} words
+                {prompt.split(/\s+/).filter((word) => word.length > 0).length}{" "}
+                words
               </span>
             </div>
           </div>
@@ -191,13 +240,14 @@ Please generate production-ready code that follows these enhanced specifications
                         AI Enhancement Available
                       </h3>
                       <p className="text-sm text-purple-700 dark:text-purple-300">
-                        Let our AI add technical specifications and best practices to your prompt
+                        Let our AI add technical specifications and best
+                        practices to your prompt
                       </p>
                     </div>
                   </div>
                   <Button
                     onClick={() => {
-                      console.log('🔘 Enhance button clicked');
+                      console.log("🔘 Enhance button clicked");
                       enhancePrompt();
                     }}
                     disabled={isEnhancing}
@@ -226,7 +276,7 @@ Please generate production-ready code that follows these enhanced specifications
             <Button
               variant="outline"
               onClick={() => {
-                console.log('🔙 Back button clicked');
+                console.log("🔙 Back button clicked");
                 onBack();
               }}
               className="flex items-center gap-2"
@@ -234,10 +284,10 @@ Please generate production-ready code that follows these enhanced specifications
               <ArrowLeft className="w-4 h-4" />
               Back
             </Button>
-            
+
             <Button
               onClick={() => {
-                console.log('🔘 Generate Code button clicked');
+                console.log("🔘 Generate Code button clicked");
                 handleSubmit();
               }}
               disabled={!prompt.trim()}
@@ -258,9 +308,13 @@ Please generate production-ready code that follows these enhanced specifications
           </h3>
           <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
             <li>• Be specific about the technology stack you want to use</li>
-            <li>• Include details about styling preferences and UI requirements</li>
+            <li>
+              • Include details about styling preferences and UI requirements
+            </li>
             <li>• Mention any specific features or functionality you need</li>
-            <li>• Specify if you need responsive design or accessibility features</li>
+            <li>
+              • Specify if you need responsive design or accessibility features
+            </li>
           </ul>
         </CardContent>
       </Card>
