@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const genAI = new GoogleGenerativeAI(geminiApiKey);
     
     let systemPrompt = '';
-    let modelName = 'gemini-pro';
+    let modelName = 'gemini-1.0-pro';
 
     console.log('🎯 Determining system prompt for action:', action);
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       systemPrompt = `You are an expert software architect. Enhance the provided prompt by adding technical specifications, best practices, accessibility requirements, performance considerations, and modern development standards. Make the prompt more detailed and actionable for code generation.`;
     } else if (action === 'generate') {
       console.log('🔧 Using code generation system prompt');
-      modelName = 'gemini-pro'; // Use Gemini Pro for code generation
+      modelName = 'gemini-1.0-pro'; // Use Gemini Pro for code generation
       systemPrompt = `You are an expert Next.js developer. Generate a complete, production-ready Next.js 14 application with TypeScript and Tailwind CSS based on the user's requirements.
 
 IMPORTANT: Return your response as a JSON object with this exact structure:
