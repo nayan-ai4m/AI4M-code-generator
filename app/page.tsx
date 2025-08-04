@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Upload, FileText, Code, Sparkles, ArrowRight } from "lucide-react";
+import { Upload, FileText, Code, Sparkles, ArrowRight, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
