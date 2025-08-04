@@ -58,14 +58,48 @@ export function PromptEditor({
     setIsEnhancing(true);
 
     try {
-      console.log("🤖 Starting Groq API enhancement simulation...");
-      // Simulate Groq API enhancement
-      // In a real implementation, you would call your Groq API endpoint
+      console.log("🤖 Starting Gemini API enhancement...");
+      
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: prompt,
+          action: 'enhance'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Gemini API request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('🤖 Gemini API response received:', data);
+
+      const enhancedPrompt = data.processedText || prompt;
+
+      console.log('✅ Enhanced prompt generated:', enhancedPrompt.substring(0, 100) + '...');
+      console.log('📊 Enhanced prompt length:', enhancedPrompt.length);
+
+      setPrompt(enhancedPrompt);
+      setHasEnhanced(true);
+
+      console.log('✅ Prompt state updated, hasEnhanced set to true');
+
+      toast({
+        title: 'Prompt enhanced successfully',
+        description: 'Your prompt has been optimized using Google Gemini Pro.',
+      });
+    } catch (error) {
+      console.error('❌ Error in enhancePrompt:', error);
+      console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+      
+      // Fallback to mock enhancement if API fails
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      console.log("🤖 Groq API simulation completed");
-
-      // Mock enhanced prompt (replace with actual Groq API response)
+      // Mock enhanced prompt as fallback
       const enhancedPrompt = `${prompt}
 
 ## Enhanced Requirements:
@@ -106,24 +140,10 @@ Please generate production-ready code that follows these enhanced specifications
       setPrompt(enhancedPrompt);
       setHasEnhanced(true);
 
-      console.log("✅ Prompt state updated, hasEnhanced set to true");
-
       toast({
-        title: "Prompt enhanced successfully",
-        description:
-          "Your prompt has been optimized for better code generation.",
-      });
-    } catch (error) {
-      console.error("❌ Error in enhancePrompt:", error);
-      console.error(
-        "❌ Error stack:",
-        error instanceof Error ? error.stack : "No stack trace"
-      );
-      toast({
-        title: "Enhancement failed",
-        description:
-          "There was an error enhancing your prompt. Please try again.",
-        variant: "destructive",
+        title: 'Enhancement completed with fallback',
+        description: 'Used fallback enhancement. Please check your Gemini API configuration.',
+        variant: 'destructive'
       });
     } finally {
       setIsEnhancing(false);

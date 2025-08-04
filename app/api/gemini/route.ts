@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
-  console.log('🧠 Groq API route called');
+  console.log('🤖 Gemini API route called');
 
   try {
     const { text, action } = await request.json();
@@ -20,22 +21,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const groqApiKey = process.env.GROQ_API_KEY;
+    const geminiApiKey = process.env.GEMINI_API_KEY;
 
-    console.log('🔑 Checking Groq API key:', {
-      hasApiKey: !!groqApiKey,
-      keyLength: groqApiKey?.length || 0
+    console.log('🔑 Checking Gemini API key:', {
+      hasApiKey: !!geminiApiKey,
+      keyLength: geminiApiKey?.length || 0
     });
 
-    if (!groqApiKey) {
-      console.error('❌ Groq API key not configured');
+    if (!geminiApiKey) {
+      console.error('❌ Gemini API key not configured');
       return NextResponse.json(
-        { error: 'Groq API key not configured. Please add GROQ_API_KEY to your environment variables.' },
+        { error: 'Gemini API key not configured. Please add GEMINI_API_KEY to your environment variables.' },
         { status: 500 }
       );
     }
 
+    // Initialize Gemini AI
+    const genAI = new GoogleGenerativeAI(geminiApiKey);
+    
     let systemPrompt = '';
+    let modelName = 'gemini-pro';
 
     console.log('🎯 Determining system prompt for action:', action);
 
@@ -47,6 +52,7 @@ export async function POST(request: NextRequest) {
       systemPrompt = `You are an expert software architect. Enhance the provided prompt by adding technical specifications, best practices, accessibility requirements, performance considerations, and modern development standards. Make the prompt more detailed and actionable for code generation.`;
     } else if (action === 'generate') {
       console.log('🔧 Using code generation system prompt');
+      modelName = 'gemini-pro'; // Use Gemini Pro for code generation
       systemPrompt = `You are an expert Next.js developer. Generate a complete, production-ready Next.js 14 application with TypeScript and Tailwind CSS based on the user's requirements.
 
 IMPORTANT: Return your response as a JSON object with this exact structure:
@@ -78,63 +84,28 @@ Requirements:
       console.warn('⚠️ Unknown action provided:', action);
     }
 
-    console.log('🌐 Making request to Groq API...');
+    console.log('🌐 Making request to Gemini API...');
     console.log('🌐 Request payload:', {
-      model: action === 'generate' ? 'deepseek-coder' : 'mixtral-8x7b-32768',
-      max_tokens: 2000,
-      temperature: 0.7,
+      model: modelName,
       systemPromptLength: systemPrompt.length,
       userTextLength: text.length
     });
 
-    // Groq API endpoint
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${groqApiKey}`
-      },
-      body: JSON.stringify({
-        model: action === 'generate' ? 'deepseek-coder' : 'llama3-8b-8192',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: text
-          }
-        ],
-        max_tokens: action === 'generate' ? 4000 : 2000,
-        temperature: 0.7
-      })
+    // Get the generative model
+    const model = genAI.getGenerativeModel({ model: modelName });
+
+    // Combine system prompt with user text
+    const fullPrompt = `${systemPrompt}\n\nUser Request: ${text}`;
+
+    // Generate content
+    const result = await model.generateContent(fullPrompt);
+    const response = await result.response;
+    const processedText = response.text();
+
+    console.log('🌐 Gemini API response received:', {
+      hasResponse: !!processedText,
+      responseLength: processedText?.length || 0
     });
-
-    console.log('🌐 Groq API response status:', response.status);
-    console.log('🌐 Groq API response ok:', response.ok);
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('❌ Groq API request failed:', {
-        status: response.status,
-        statusText: response.statusText,
-        errorData
-      });
-      return NextResponse.json(
-        { error: 'Groq API request failed', details: errorData },
-        { status: response.status }
-      );
-    }
-
-    const data = await response.json();
-    console.log('✅ Groq API response received:', {
-      hasChoices: !!data.choices,
-      choicesLength: data.choices?.length || 0,
-      messageLength: data.choices?.[0]?.message?.content?.length || 0
-    });
-
-    const processedText = data.choices[0].message.content;
 
     console.log('✅ Returning processed text:', {
       processedTextLength: processedText.length,
@@ -147,11 +118,23 @@ Requirements:
     });
 
   } catch (error) {
-    console.error('Groq API error:', error);
-    console.error('Groq API error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('Gemini API error:', error);
+    console.error('Gemini API error stack:', error instanceof Error ? error.stack : 'No stack trace');
+
+    // Handle specific Gemini API errors
+    let errorMessage = 'Internal server error';
+    if (error instanceof Error) {
+      if (error.message.includes('API_KEY_INVALID')) {
+        errorMessage = 'Invalid Gemini API key. Please check your configuration.';
+      } else if (error.message.includes('QUOTA_EXCEEDED')) {
+        errorMessage = 'Gemini API quota exceeded. Please try again later.';
+      } else if (error.message.includes('SAFETY')) {
+        errorMessage = 'Content was blocked by Gemini safety filters. Please modify your request.';
+      }
+    }
 
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

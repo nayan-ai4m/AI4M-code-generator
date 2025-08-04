@@ -115,7 +115,7 @@ What would you like to work on today?`,
         requestContent = `Previous code context:\n${contextMessage.content}\n\nModification request: ${message}`;
       }
       
-      const response = await fetch('/api/groq', {
+      const response = await fetch('/api/gemini', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

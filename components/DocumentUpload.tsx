@@ -122,18 +122,18 @@ export function DocumentUpload({ onProcessed }: DocumentUploadProps) {
 
       // Simulate document processing with Groq API
       // In a real implementation, you would:
-      console.log('🤖 Starting Groq API simulation...');
+      console.log('🤖 Starting Gemini API processing...');
       // 1. Upload the file to your backend
       console.log('📤 Step 1: Upload file to backend (simulated)');
       // 2. Extract text from the document
       console.log('📄 Step 2: Extract text from document (simulated)');
-      // 3. Send to Groq API for summarization
-      console.log('🧠 Step 3: Send to Groq API for summarization (simulated)');
+      // 3. Send to Gemini API for summarization
+      console.log('🧠 Step 3: Send to Gemini API for summarization (simulated)');
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       setUploadProgress(100);
 
-      // Mock processed prompt (replace with actual Groq API response)
+      // Mock processed prompt (replace with actual Gemini API response)
       const mockProcessedPrompt = `Based on the uploaded document, create a modern web application with the following requirements:
 
 1. User authentication system with login/signup
