@@ -174,7 +174,7 @@ export function ChatInterface({ onGenerateCode }: ChatInterfaceProps) {
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-0 border border-red-500">
+      <CardContent className="flex-1 flex flex-col p-0 border border-red-500 h-auto">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.map((message) => (
