@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const genAI = new GoogleGenerativeAI(geminiApiKey);
     
     let systemPrompt = '';
-    let modelName = 'gemini-1.0-pro';
+    let modelName = 'gemini-pro';
 
     console.log('🎯 Determining system prompt for action:', action);
 
