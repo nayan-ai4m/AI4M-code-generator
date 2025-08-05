@@ -78,33 +78,7 @@ export default function Home() {
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-4">
             AI For Solutions
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Transform your ideas into production-ready code with intelligent
-            document processing, prompt enhancement, and real-time preview
-            capabilities.
-          </p>
         </div>
-
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {features.map((feature, index) => (
-            <Card
-              key={index}
-              className="border-0 shadow-lg bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            >
-              <CardHeader className="pb-2">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center mb-4">
-                  <feature.icon className="w-6 h-6 text-white" />
-                </div>
-                <CardTitle className="text-lg">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>{feature.description}</CardDescription>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
         {/* Main Interface */}
         <div className="max-w-6xl mx-auto">
           {/* View Toggle */}

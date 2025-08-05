@@ -58,9 +58,9 @@ export function PromptEditor({
     setIsEnhancing(true);
 
     try {
-      console.log("🤖 Starting Gemini API enhancement...");
+      console.log("🤖 Starting Groq API enhancement...");
       
-      const response = await fetch('/api/gemini', {
+      const response = await fetch('/api/groq', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,11 +72,11 @@ export function PromptEditor({
       });
 
       if (!response.ok) {
-        throw new Error(`Gemini API request failed: ${response.status}`);
+        throw new Error(`Groq API request failed: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('🤖 Gemini API response received:', data);
+      console.log('🤖 Groq API response received:', data);
 
       const enhancedPrompt = data.processedText || prompt;
 
@@ -90,7 +90,7 @@ export function PromptEditor({
 
       toast({
         title: 'Prompt enhanced successfully',
-        description: 'Your prompt has been optimized using Google Gemini Pro.',
+        description: 'Your prompt has been optimized using Groq Llama.',
       });
     } catch (error) {
       console.error('❌ Error in enhancePrompt:', error);
@@ -142,7 +142,7 @@ Please generate production-ready code that follows these enhanced specifications
 
       toast({
         title: 'Enhancement completed with fallback',
-        description: 'Used fallback enhancement. Please check your Gemini API configuration.',
+        description: 'Used fallback enhancement. Please check your Groq API configuration.',
         variant: 'destructive'
       });
     } finally {

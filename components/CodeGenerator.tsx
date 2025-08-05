@@ -64,7 +64,7 @@ export function CodeGenerator({ prompt, onBack }: CodeGeneratorProps) {
 
       console.log('🤖 Making request to Claude API...');
       
-      const response = await fetch('/api/gemini', {
+      const response = await fetch('/api/groq', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,16 +76,16 @@ export function CodeGenerator({ prompt, onBack }: CodeGeneratorProps) {
       });
 
       if (!response.ok) {
-        throw new Error(`Gemini API request failed: ${response.status}`);
+        throw new Error(`Groq API request failed: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('🤖 Gemini API response received:', data);
+      console.log('🤖 Groq API response received:', data);
 
       console.log('📊 Setting generation progress to 100%');
       setGenerationProgress(100);
 
-      // Parse the response from Gemini Pro
+      // Parse the response from Groq
       let generatedFiles;
       try {
         const parsedResponse = JSON.parse(data.processedText);
@@ -106,7 +106,7 @@ export function CodeGenerator({ prompt, onBack }: CodeGeneratorProps) {
       console.log('✅ Code generation completed successfully');
       toast({
         title: 'Code generated successfully!',
-        description: 'Your Next.js project has been generated using Google Gemini Pro.',
+        description: 'Your Next.js project has been generated using Groq Llama.',
       });
       
     } catch (error) {
@@ -123,7 +123,7 @@ export function CodeGenerator({ prompt, onBack }: CodeGeneratorProps) {
       
       toast({
         title: 'Code generated with fallback',
-        description: 'Generated using mock data. Please check your Gemini API configuration.',
+        description: 'Generated using mock data. Please check your Groq API configuration.',
         variant: 'destructive'
       });
     } finally {

@@ -127,8 +127,8 @@ export function DocumentUpload({ onProcessed }: DocumentUploadProps) {
       console.log('📤 Step 1: Upload file to backend (simulated)');
       // 2. Extract text from the document
       console.log('📄 Step 2: Extract text from document (simulated)');
-      // 3. Send to Gemini API for summarization
-      console.log('🧠 Step 3: Send to Gemini API for summarization (simulated)');
+      // 3. Send to Groq API for summarization
+      console.log('🧠 Step 3: Send to Groq API for summarization (simulated)');
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       setUploadProgress(100);

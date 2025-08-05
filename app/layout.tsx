@@ -30,19 +30,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  console.log('🏗️ RootLayout component initialized');
-  
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {console.log('🏗️ RootLayout body rendering')}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {console.log('🏗️ ThemeProvider initialized')}
           {children}
           <Toaster />
         </ThemeProvider>
