@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 export async function POST(request: NextRequest) {
-  console.log('🤖 OpenAI GPT-4.1 API route called');
+  console.log('🤖 OpenAI GPT-4 API route called');
 
   try {
     const { text, action } = await request.json();
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     });
 
     let systemPrompt = '';
-    let model = 'gpt-4-turbo-preview'; // Using GPT-4 Turbo as GPT-4.1 equivalent
+    let model = 'gpt-4'; // Using GPT-4
 
     console.log('🎯 Determining system prompt for action:', action);
 
@@ -91,10 +91,10 @@ Requirements:
 IMPORTANT: Your response must be ONLY the JSON object, no additional text or markdown formatting.`;
     } else if (action === 'chat') {
       console.log('💬 Using chat system prompt');
-      systemPrompt = `You are GPT-4.1, an advanced AI assistant. You are helpful, knowledgeable, and provide clear, accurate responses. When discussing code or technical topics, use proper markdown formatting with code blocks. Be conversational but professional, and provide detailed explanations when helpful.`;
+      systemPrompt = `You are GPT-4, an advanced AI assistant. You are helpful, knowledgeable, and provide clear, accurate responses. When discussing code or technical topics, use proper markdown formatting with code blocks. Be conversational but professional, and provide detailed explanations when helpful.`;
     } else if (action === 'edit') {
       console.log('✏️ Using code editing system prompt');
-      systemPrompt = `You are an expert code editor using GPT-4.1. The user will provide existing code and a modification request. Your task is to:
+      systemPrompt = `You are an expert code editor using GPT-4. The user will provide existing code and a modification request. Your task is to:
 
 1. Understand the existing code structure and functionality
 2. Apply the requested modifications while maintaining code quality
@@ -116,7 +116,7 @@ Always format your response with:
 - Comments highlighting key changes`;
     } else {
       console.warn('⚠️ Unknown action provided:', action);
-      systemPrompt = `You are GPT-4.1, an advanced AI assistant. Provide helpful, accurate responses using proper markdown formatting when appropriate.`;
+      systemPrompt = `You are GPT-4, an advanced AI assistant. Provide helpful, accurate responses using proper markdown formatting when appropriate.`;
     }
 
     console.log('🌐 Making request to OpenAI API...');

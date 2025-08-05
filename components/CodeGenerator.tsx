@@ -115,7 +115,7 @@ export function CodeGenerator({ prompt, onBack }: CodeGeneratorProps) {
       console.log('✅ Code generation completed successfully');
       toast({
         title: 'Code generated successfully!',
-        description: 'Your Next.js project has been generated using GPT-4.1.',
+        description: 'Your Next.js project has been generated using GPT-4.',
       });
       
     } catch (error) {
@@ -132,7 +132,7 @@ export function CodeGenerator({ prompt, onBack }: CodeGeneratorProps) {
       
       toast({
         title: 'Code generated with fallback',
-        description: 'Generated using mock data. Please check your OpenAI API configuration.',
+        description: 'Generated using mock data. Please check your OpenAI GPT-4 API configuration.',
         variant: 'destructive'
       });
     } finally {

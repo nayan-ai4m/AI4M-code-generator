@@ -1,13 +1,13 @@
 # AI Code Generator
 
-A modern, responsive web application that integrates with OpenAI GPT-4.1 and Stackblitz to provide intelligent code generation with document processing and real-time preview capabilities.
+A modern, responsive web application that integrates with OpenAI GPT-4 and Stackblitz to provide intelligent code generation with document processing and real-time preview capabilities.
 
 ## Features
 
 ### 🚀 Core Functionality
-- **Smart Document Processing**: Upload PDFs, Word documents, or text files for GPT-4.1 powered summarization
-- **Prompt Enhancement**: GPT-4.1 intelligently enhances prompts with technical specifications and best practices
-- **AI Code Generation**: GPT-4.1 generates production-ready Next.js applications with proper folder structure
+- **Smart Document Processing**: Upload PDFs, Word documents, or text files for GPT-4 powered summarization
+- **Prompt Enhancement**: GPT-4 intelligently enhances prompts with technical specifications and best practices
+- **AI Code Generation**: GPT-4 generates production-ready Next.js applications with proper folder structure
 - **Live Code Preview**: Stackblitz integration for real-time code editing and testing
 - **Download & Copy**: Easy code export with one-click download and clipboard copy
 
@@ -30,7 +30,7 @@ A modern, responsive web application that integrates with OpenAI GPT-4.1 and Sta
 ### Prerequisites
 - Node.js 18+
 - npm or yarn
-- API key for OpenAI GPT-4.1 (see setup instructions below)
+- API key for OpenAI GPT-4 (see setup instructions below)
 
 ### Installation
 
@@ -98,7 +98,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 - Drag & drop file upload
 - File type validation (PDF, Word, Text)
 - Progress indicators
-- Document processing with Google Gemini API
+- Document processing with OpenAI GPT-4 API
 
 ### PromptEditor  
 - Rich text editing for prompts
@@ -107,7 +107,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 - Enhancement status indicators
 
 ### CodeGenerator
-- Claude API integration for code generation
+- OpenAI GPT-4 API integration for code generation
 - Tabbed code view (HTML, CSS, JavaScript)
 - Copy to clipboard functionality
 - Download all files feature
@@ -115,8 +115,8 @@ OPENAI_API_KEY=your_openai_api_key_here
 
 ## API Endpoints
 
-### POST /api/openai
-Processes text using OpenAI GPT-4.1 API
+### POST /api/openai  
+Processes text using OpenAI GPT-4 API
 - **Body**: `{ text: string, action: 'summarize' | 'enhance' }`
 - **Response**: `{ success: boolean, processedText: string }`
 
@@ -167,10 +167,10 @@ This application can be deployed to:
 
 ## Usage Limits & Considerations
 
-- **API Rate Limits**: OpenAI API has rate limits. Monitor usage in production.
+- **API Rate Limits**: OpenAI GPT-4 API has rate limits. Monitor usage in production.
 - **File Size Limits**: Current limit is 10MB for uploaded files. Adjust in `/api/upload/route.ts` if needed.
 - **Security**: API keys are server-side only and never exposed to the client.
-- **Cost**: Monitor API usage as OpenAI has usage-based pricing.
+- **Cost**: Monitor API usage as OpenAI GPT-4 has usage-based pricing.
 
 ## Browser Support
 
@@ -203,7 +203,7 @@ This project is provided as-is for educational and development purposes. Please 
 ## Support
 
 For issues related to:
-- **OpenAI API**: Check OpenAI's documentation
+- **OpenAI GPT-4 API**: Check OpenAI's documentation
 - **Stackblitz**: Check Stackblitz's documentation
 - **This Application**: Review the code comments and component documentation
 

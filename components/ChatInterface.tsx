@@ -186,7 +186,7 @@ What would you like to work on today?`,
       toast({
         title: "Chat Error",
         description:
-          "Failed to get response from OpenAI GPT-4.1. Please check your API key configuration.",
+          "Failed to get response from OpenAI GPT-4. Please check your API key configuration.",
         variant: "destructive",
       });
     } finally {

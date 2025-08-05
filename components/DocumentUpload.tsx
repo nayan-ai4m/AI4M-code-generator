@@ -122,13 +122,13 @@ export function DocumentUpload({ onProcessed }: DocumentUploadProps) {
 
       // Simulate document processing with Groq API
       // In a real implementation, you would:
-      console.log('🤖 Starting GPT-4.1 API processing...');
+      console.log('🤖 Starting GPT-4 API processing...');
       // 1. Upload the file to your backend
       console.log('📤 Step 1: Upload file to backend (simulated)');
       // 2. Extract text from the document
       console.log('📄 Step 2: Extract text from document (simulated)');
-      // 3. Send to GPT-4.1 API for summarization
-      console.log('🧠 Step 3: Send to GPT-4.1 API for summarization (simulated)');
+      // 3. Send to GPT-4 API for summarization
+      console.log('🧠 Step 3: Send to GPT-4 API for summarization (simulated)');
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       setUploadProgress(100);

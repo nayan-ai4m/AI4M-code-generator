@@ -90,7 +90,7 @@ export function PromptEditor({
 
       toast({
         title: 'Prompt enhanced successfully',
-        description: 'Your prompt has been optimized using GPT-4.1.',
+        description: 'Your prompt has been optimized using GPT-4.',
       });
     } catch (error) {
       console.error('❌ Error in enhancePrompt:', error);
@@ -142,7 +142,7 @@ Please generate production-ready code that follows these enhanced specifications
 
       toast({
         title: 'Enhancement completed with fallback',
-        description: 'Used fallback enhancement. Please check your OpenAI API configuration.',
+        description: 'Used fallback enhancement. Please check your OpenAI GPT-4 API configuration.',
         variant: 'destructive'
       });
     } finally {
