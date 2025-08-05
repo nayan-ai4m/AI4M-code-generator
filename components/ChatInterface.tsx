@@ -12,6 +12,8 @@ import {
   Edit3,
   Play,
   Download,
+  FileText,
+  Folder,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,9 +29,9 @@ interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
-  // timestamp: Date;
   isCodeMode?: boolean;
   codeContext?: string;
+  jsonData?: any; // For storing parsed JSON responses
 }
 
 interface ChatInterfaceProps {
@@ -65,7 +67,6 @@ I'm your intelligent coding companion. I can help you with:
 - **Edit code**: Use the edit feature on any code response to modify it
 
 What would you like to work on today?`,
-      // timestamp: new Date()
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -93,6 +94,132 @@ What would you like to work on today?`,
     "Create a REST API with Node.js",
   ];
 
+  // Helper function to detect file extension and get appropriate language
+  const getLanguageFromFilename = (filename: string): string => {
+    const ext = filename.split(".").pop()?.toLowerCase();
+    const languageMap: { [key: string]: string } = {
+      js: "javascript",
+      jsx: "javascript",
+      ts: "typescript",
+      tsx: "typescript",
+      css: "css",
+      scss: "scss",
+      html: "html",
+      json: "json",
+      md: "markdown",
+      py: "python",
+      php: "php",
+      java: "java",
+      cpp: "cpp",
+      c: "c",
+      sh: "bash",
+      sql: "sql",
+      xml: "xml",
+      yaml: "yaml",
+      yml: "yaml",
+    };
+    return languageMap[ext || ""] || "plaintext";
+  };
+
+  // Component to render JSON project structure
+  const ProjectStructureView = ({ jsonData }: { jsonData: any }) => {
+    if (!jsonData.files) return null;
+
+    const files = jsonData.files;
+    const fileEntries = Object.entries(files) as [string, string][];
+
+    return (
+      <div className="space-y-6">
+        {jsonData.description && (
+          <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+            <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Project Description
+            </h3>
+            <p className="text-blue-800 dark:text-blue-200">
+              {jsonData.description}
+            </p>
+          </div>
+        )}
+
+        <div>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+            <Folder className="w-4 h-4" />
+            Project Files ({fileEntries.length})
+          </h3>
+
+          <div className="space-y-4">
+            {fileEntries.map(([filename, content], index) => (
+              <div
+                key={index}
+                className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+              >
+                <div className="bg-gray-50 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                    <span className="font-mono text-sm font-medium">
+                      {filename}
+                    </span>
+                    <Badge variant="secondary" className="text-xs">
+                      {getLanguageFromFilename(filename)}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyMessage(content)}
+                      className="h-6 px-2 text-xs"
+                    >
+                      <Copy className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => downloadCode(content, filename)}
+                      className="h-6 px-2 text-xs"
+                    >
+                      <Download className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="relative">
+                  <SyntaxHighlighter
+                    style={oneDark}
+                    language={getLanguageFromFilename(filename)}
+                    PreTag="div"
+                    className="!mt-0 !mb-0 !rounded-none"
+                    showLineNumbers={true}
+                    wrapLines={true}
+                  >
+                    {content}
+                  </SyntaxHighlighter>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {jsonData.stackblitzConfig && (
+          <div className="bg-green-50 dark:bg-green-950/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+            <h3 className="font-semibold text-green-900 dark:text-green-100 mb-2 flex items-center gap-2">
+              <Play className="w-4 h-4" />
+              Project Configuration
+            </h3>
+            <SyntaxHighlighter
+              style={oneDark}
+              language="json"
+              PreTag="div"
+              className="!mt-2 !mb-0 rounded-lg"
+            >
+              {JSON.stringify(jsonData.stackblitzConfig, null, 2)}
+            </SyntaxHighlighter>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const sendMessage = async (
     message: string,
     codeMode: boolean = false,
@@ -110,7 +237,6 @@ What would you like to work on today?`,
       id: Date.now().toString(),
       role: "user",
       content: message,
-      // timestamp: new Date(),
       isCodeMode: codeMode,
     };
 
@@ -154,9 +280,39 @@ What would you like to work on today?`,
 
       let assistantContent =
         data.processedText || "Sorry, I couldn't process your request.";
+      let jsonData = null;
 
-      // If this was a code editing request, format the response appropriately
-      if (contextMessage) {
+      // Try to parse JSON response if it's in JSON format
+      if (action === "generate" && assistantContent.trim().startsWith("{")) {
+        try {
+          jsonData = JSON.parse(assistantContent);
+          console.log("📋 Parsed JSON data:", jsonData);
+
+          // For JSON responses, we'll render them specially
+          assistantContent = `# Generated Project: ${
+            jsonData.description || "MERN Stack Application"
+          }
+
+${
+  jsonData.description
+    ? jsonData.description
+    : "A complete MERN stack application has been generated for you."
+}
+
+## Project Overview
+- **Files created**: ${Object.keys(jsonData.files || {}).length}
+- **Technology Stack**: MongoDB, Express, React, Node.js
+- **Framework**: Next.js 14 with TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: MongoDB with Mongoose
+
+The complete project structure and code are displayed below. You can copy individual files or download them as needed.`;
+        } catch (err) {
+          console.warn("Failed to parse JSON response:", err);
+          // Keep the original content if parsing fails
+        }
+      } else if (contextMessage) {
+        // For code editing request, format appropriately
         assistantContent = `## Updated Code\n\n${assistantContent}`;
       }
 
@@ -164,9 +320,9 @@ What would you like to work on today?`,
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: assistantContent,
-        // timestamp: new Date(),
         isCodeMode: codeMode,
         codeContext: contextMessage?.content,
+        jsonData: jsonData,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -178,7 +334,6 @@ What would you like to work on today?`,
         role: "assistant",
         content:
           "## Error\n\nSorry, I encountered an error processing your request. Please try again.",
-        // timestamp: new Date()
       };
 
       setMessages((prev) => [...prev, errorMessage]);
@@ -212,7 +367,7 @@ What would you like to work on today?`,
       await navigator.clipboard.writeText(content);
       toast({
         title: "Copied to clipboard",
-        description: "Message has been copied to your clipboard.",
+        description: "Content has been copied to your clipboard.",
       });
     } catch (error) {
       console.error("❌ Error copying to clipboard:", error);
@@ -238,6 +393,21 @@ What would you like to work on today?`,
     toast({
       title: "Code downloaded",
       description: `${filename} has been downloaded to your device.`,
+    });
+  };
+
+  const downloadAllFiles = (jsonData: any) => {
+    if (!jsonData.files) return;
+
+    Object.entries(jsonData.files).forEach(([filename, content]) => {
+      downloadCode(content as string, filename);
+    });
+
+    toast({
+      title: "All files downloaded",
+      description: `${
+        Object.keys(jsonData.files).length
+      } files have been downloaded.`,
     });
   };
 
@@ -395,11 +565,6 @@ What would you like to work on today?`,
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                       {message.role === "user" ? "You" : "AI Assistant"}
                     </span>
-                    {/*
-                    <span className="text-xs text-gray-500">
-                      {message.timestamp.toLocaleTimeString()}
-                    </span>
-                     */}
                     {message.isCodeMode && (
                       <Badge variant="secondary" className="text-xs">
                         <Code className="w-3 h-3 mr-1" />
@@ -424,6 +589,13 @@ What would you like to work on today?`,
                         <ReactMarkdown components={MarkdownComponents}>
                           {message.content}
                         </ReactMarkdown>
+
+                        {/* Render JSON project structure if available */}
+                        {message.jsonData && (
+                          <div className="mt-6">
+                            <ProjectStructureView jsonData={message.jsonData} />
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -441,38 +613,28 @@ What would you like to work on today?`,
                         Copy
                       </Button>
 
-                      {hasCodeBlocks(message.content) && (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEditCode(message.id)}
-                            className="h-8 px-3 text-xs"
-                          >
-                            <Edit3 className="w-3 h-3 mr-1" />
-                            Edit Code
-                          </Button>
+                      {message.jsonData && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => downloadAllFiles(message.jsonData)}
+                          className="h-8 px-3 text-xs"
+                        >
+                          <Download className="w-3 h-3 mr-1" />
+                          Download All
+                        </Button>
+                      )}
 
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              const codeBlocks = extractCodeBlocks(
-                                message.content
-                              );
-                              if (codeBlocks.length > 0) {
-                                downloadCode(
-                                  codeBlocks[0].code,
-                                  `code.${codeBlocks[0].language}`
-                                );
-                              }
-                            }}
-                            className="h-8 px-3 text-xs"
-                          >
-                            <Download className="w-3 h-3 mr-1" />
-                            Download
-                          </Button>
-                        </>
+                      {(hasCodeBlocks(message.content) || message.jsonData) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditCode(message.id)}
+                          className="h-8 px-3 text-xs"
+                        >
+                          <Edit3 className="w-3 h-3 mr-1" />
+                          Edit Code
+                        </Button>
                       )}
                     </div>
                   )}
