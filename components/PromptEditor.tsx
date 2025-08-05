@@ -60,7 +60,7 @@ export function PromptEditor({
     try {
       console.log("🤖 Starting Groq API enhancement...");
       
-      const response = await fetch('/api/groq', {
+      const response = await fetch('/api/openai', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,11 +72,11 @@ export function PromptEditor({
       });
 
       if (!response.ok) {
-        throw new Error(`Groq API request failed: ${response.status}`);
+        throw new Error(`OpenAI API request failed: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('🤖 Groq API response received:', data);
+      console.log('🤖 OpenAI API response received:', data);
 
       const enhancedPrompt = data.processedText || prompt;
 
@@ -90,7 +90,7 @@ export function PromptEditor({
 
       toast({
         title: 'Prompt enhanced successfully',
-        description: 'Your prompt has been optimized using Groq Llama.',
+        description: 'Your prompt has been optimized using GPT-4.1.',
       });
     } catch (error) {
       console.error('❌ Error in enhancePrompt:', error);
@@ -142,7 +142,7 @@ Please generate production-ready code that follows these enhanced specifications
 
       toast({
         title: 'Enhancement completed with fallback',
-        description: 'Used fallback enhancement. Please check your Groq API configuration.',
+        description: 'Used fallback enhancement. Please check your OpenAI API configuration.',
         variant: 'destructive'
       });
     } finally {

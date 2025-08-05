@@ -128,7 +128,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="text-center mt-16 text-gray-500 dark:text-gray-400">
-          <p className="mb-2">Powered by Google Gemini and Stackblitz</p>
+          <p className="mb-2">Powered by OpenAI GPT-4.1 and Stackblitz</p>
         </footer>
       </div>
     </div>

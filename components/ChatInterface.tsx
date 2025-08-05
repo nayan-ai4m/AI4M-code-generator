@@ -134,7 +134,7 @@ What would you like to work on today?`,
         requestContent = `Previous code context:\n${contextMessage.content}\n\nModification request: ${message}`;
       }
 
-      const response = await fetch("/api/groq", {
+      const response = await fetch("/api/openai", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -186,7 +186,7 @@ What would you like to work on today?`,
       toast({
         title: "Chat Error",
         description:
-          "Failed to get response from Groq API. Please check your API key configuration.",
+          "Failed to get response from OpenAI GPT-4.1. Please check your API key configuration.",
         variant: "destructive",
       });
     } finally {
